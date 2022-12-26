@@ -35,35 +35,35 @@ def test_game_set_board():
     ]
 
 
-def test_game_players_pieces():
+def test_game_first_players_pieces():
     game = Game(3)
-    assert game.players_pieces() == [
-        ('player', 1), ('player', 1), ('player', 2), ('player', 2), ('player', 3), ('player', 3)
+    assert game.first_players_pieces() == [
+        ('player1', 1), ('player1', 1), ('player1', 2), ('player1', 2), ('player1', 3), ('player1', 3)
     ]
 
 
-def test_game_opponents_pieces():
+def test_game_second_players_pieces():
     game = Game(3)
-    assert game.opponents_pieces() == [
-        ('opponent', 1), ('opponent', 1), ('opponent', 2), ('opponent', 2), ('opponent', 3), ('opponent', 3)
+    assert game.second_players_pieces() == [
+        ('player2', 1), ('player2', 1), ('player2', 2), ('player2', 2), ('player2', 3), ('player2', 3)
     ]
 
 
-def test_game_set_players_pieces():
+def test_game_set_first_players_pieces():
     game = Game(3)
-    game.set_players_pieces([
-        ('player', 1), ('player', 3)
+    game.set_first_players_pieces([
+        ('player1', 1), ('playe1r', 3)
     ])
-    assert game.players_pieces() == [
-        ('player', 1), ('player', 3)
+    assert game.first_players_pieces() == [
+        ('player1', 1), ('playe1r', 3)
     ]
 
 
 def test_game_set_opponents_pieces():
     game = Game(3)
-    game.set_opponents_pieces([
-        ('opponent', 1), ('opponent', 3)
+    game.set_second_players_pieces([
+        ('player2', 1), ('player2', 3)
     ])
-    assert game.opponents_pieces() == [
-        ('opponent', 1), ('opponent', 3)
+    assert game.second_players_pieces() == [
+        ('player2', 1), ('player2', 3)
     ]
