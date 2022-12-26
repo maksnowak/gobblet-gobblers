@@ -1,3 +1,15 @@
+class PieceUnavailableError(Exception):
+    pass
+
+
+class NotOnBoardError(Exception):
+    pass
+
+
+class CantCoverPieceError(Exception):
+    pass
+
+
 class Game:
     def __init__(self, size) -> None:
         self.__board = []
@@ -18,14 +30,18 @@ class Game:
     def set_board(self, new_board):
         self.__board = new_board
 
-    def first_players_pieces(self):
+    def player_one_pieces(self):
         return self.__player_one
 
-    def set_first_players_pieces(self, new_pieces):
+    def set_player_one_pieces(self, new_pieces):
         self.__player_one = new_pieces
 
-    def second_players_pieces(self):
+    # TODO refactor pieces methods using 'exec'
+
+    def player_two_pieces(self):
         return self.__player_two
 
-    def set_second_players_pieces(self, new_pieces):
+    def set_player_two_pieces(self, new_pieces):
         self.__player_two = new_pieces
+
+    # def move(player, size, previous_position, new_position):
