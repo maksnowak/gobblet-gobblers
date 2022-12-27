@@ -287,3 +287,17 @@ def test_game_move_cant_cover_piece():
     ])
     with raises(CantCoverPieceError):
         game.move('player_two', 2, [2, 2], [1, 3])
+
+
+def test_game_move_cant_cover_piece_both_pieces_are_the_same_size():
+    game = Game(3)
+    game.set_board([
+        [[], [], []],
+        [[], [('player_two', 3)], []],
+        [[('player_two', 3)], [], []]
+    ])
+    game.set_player_two_pieces([
+        ('player_two', 1), ('player_two', 1), ('player_two', 2), ('player_two', 2)
+    ])
+    with raises(CantCoverPieceError):
+        game.move('player_two', 3, [2, 2], [1, 3])

@@ -51,7 +51,7 @@ class Game:
         else:
             player_pieces = self.player_two_pieces
             set_player_pieces = self.set_player_two_pieces
-        if (player, size) not in player_pieces():
+        if (player, size) not in player_pieces() and previous_position is None:
             raise PieceUnavailableError('This piece is not available!')
         if previous_position is not None:
             try:
