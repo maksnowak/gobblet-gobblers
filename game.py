@@ -79,3 +79,6 @@ class Game:
             new_board[previous_position[1] - 1][previous_position[0] - 1].pop()
             self.set_board(new_board)
             set_player_pieces(new_player_pieces)
+
+    def check_for_win(self):
+        pass
