@@ -1,3 +1,6 @@
+from copy import deepcopy
+
+
 class PieceUnavailableError(Exception):
     pass
 
@@ -25,6 +28,7 @@ class Game:
             self.__player_one.append(('player_one', i + 1))
             self.__player_two.append(('player_two', i + 1))
             self.__player_two.append(('player_two', i + 1))
+        self.__recent_boards = []
 
     def board(self):
         return self.__board
@@ -43,6 +47,17 @@ class Game:
 
     def set_player_two_pieces(self, new_pieces):
         self.__player_two = new_pieces
+
+    def recent_boards(self):
+        return self.__recent_boards
+
+    def update_recent_boards(self):
+        current_board = deepcopy(self.board())
+        boards = deepcopy(self.recent_boards())
+        if len(boards) == 9:
+            boards.pop(0)
+        boards.append(current_board)
+        self.__recent_boards = boards
 
     def move(self, player, size, previous_position, new_position):
         if player == 'player_one':
@@ -66,19 +81,17 @@ class Game:
             except IndexError:
                 pass
         if previous_position is None:
-            new_board = self.board().copy()
-            new_player_pieces = player_pieces().copy()
+            new_board = deepcopy(self.board())
+            new_player_pieces = deepcopy(player_pieces())
             new_board[new_position[1] - 1][new_position[0] - 1].append((player, size))
             new_player_pieces.remove((player, size))
             self.set_board(new_board)
             set_player_pieces(new_player_pieces)
         else:
-            new_board = self.board().copy()
-            new_player_pieces = player_pieces().copy()
+            new_board = deepcopy(self.board())
+            new_player_pieces = deepcopy(player_pieces())
             new_board[new_position[1] - 1][new_position[0] - 1].append((player, size))
             new_board[previous_position[1] - 1][previous_position[0] - 1].pop()
             self.set_board(new_board)
             set_player_pieces(new_player_pieces)
-
-    def check_for_win(self):
-        pass
+        self.update_recent_boards()
