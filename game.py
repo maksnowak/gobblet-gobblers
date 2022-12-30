@@ -95,3 +95,52 @@ class Game:
             self.set_board(new_board)
             set_player_pieces(new_player_pieces)
         self.update_recent_boards()
+
+    def check_for_win(self):
+        possible_winners = []
+        top_layer = []
+        for row in self.board():
+            new_row = []
+            for cell in row:
+                try:
+                    new_row.append(cell[-1])
+                except IndexError:
+                    new_row.append(('',))
+            top_layer.append(new_row)
+        # checking rows
+        for row in top_layer:
+            row_pieces = []
+            for cell in row:
+                row_pieces.append(cell[0])
+            if len(set(row_pieces)) == 1 and set(row_pieces) != {''}:
+                possible_winners.append(row_pieces[0])
+        # checking columns
+        for i in range(len(top_layer)):
+            column_pieces = []
+            for j in range(len(top_layer)):
+                column_pieces.append(top_layer[j][i][0])
+            if len(set(column_pieces)) == 1 and set(column_pieces) != {''}:
+                possible_winners.append(column_pieces[0])
+        # checking left diagonal
+        left_diagonal_pieces = []
+        for i in range(len(top_layer)):
+            left_diagonal_pieces.append(top_layer[i][i][0])
+        if len(set(left_diagonal_pieces)) == 1 and set(left_diagonal_pieces) != {''}:
+            possible_winners.append(left_diagonal_pieces[0])
+        # checking right diagonal
+        right_diagonal_pieces = []
+        for i in range(len(top_layer)):
+            right_diagonal_pieces.append(top_layer[i][-1 - i][0])
+        if len(set(right_diagonal_pieces)) == 1 and set(right_diagonal_pieces) != {''}:
+            possible_winners.append(right_diagonal_pieces[0])
+        # checking for draw by repetition
+        for board in self.recent_boards():
+            if self.recent_boards().count(board) == 3:
+                return 'Draw'
+        # checking for draw or win
+        if len(possible_winners) == 0:
+            return None
+        elif len(possible_winners) == 1:
+            return possible_winners[0]
+        else:
+            return 'Draw'

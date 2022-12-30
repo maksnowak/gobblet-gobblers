@@ -372,3 +372,165 @@ def test_game_recent_boards_after_tenth_move():
             [[('player_one', 2)], [('player_one', 1), ('player_two', 2)], [('player_two', 1)]]
         ]
     ]
+
+
+def test_game_check_for_win_top_row():
+    game = Game(3)
+    game.set_board([
+        [[('player_one', 1)], [('player_one', 2)], [('player_one', 3)]],
+        [[], [], []],
+        [[], [], []]
+    ])
+    assert game.check_for_win() == 'player_one'
+
+
+def test_game_check_for_win_middle_row():
+    game = Game(3)
+    game.set_board([
+        [[], [], []],
+        [[('player_one', 1)], [('player_one', 2)], [('player_one', 3)]],
+        [[], [], []]
+    ])
+    assert game.check_for_win() == 'player_one'
+
+
+def test_game_check_for_win_bottom_row():
+    game = Game(3)
+    game.set_board([
+        [[], [], []],
+        [[], [], []],
+        [[('player_one', 1)], [('player_one', 2)], [('player_one', 3)]]
+    ])
+    assert game.check_for_win() == 'player_one'
+
+
+def test_game_check_for_win_left_column():
+    game = Game(3)
+    game.set_board([
+        [[('player_two', 2)], [], []],
+        [[('player_two', 1)], [], []],
+        [[('player_two', 3)], [], []]
+    ])
+    assert game.check_for_win() == 'player_two'
+
+
+def test_game_check_for_win_middle_column():
+    game = Game(3)
+    game.set_board([
+        [[], [('player_two', 2)], []],
+        [[], [('player_two', 1)], []],
+        [[], [('player_two', 3)], []]
+    ])
+    assert game.check_for_win() == 'player_two'
+
+
+def test_game_check_for_win_right_column():
+    game = Game(3)
+    game.set_board([
+        [[], [], [('player_two', 2)]],
+        [[], [], [('player_two', 1)]],
+        [[], [], [('player_two', 3)]]
+    ])
+    assert game.check_for_win() == 'player_two'
+
+
+def test_game_check_for_win_left_diagonal():
+    game = Game(3)
+    game.set_board([
+        [[('player_one', 1)], [], []],
+        [[], [('player_one', 2)], []],
+        [[], [], [('player_one', 2)]]
+    ])
+    assert game.check_for_win() == 'player_one'
+
+
+def test_game_check_for_win_right_diagonal():
+    game = Game(3)
+    game.set_board([
+        [[], [], [('player_one', 3)]],
+        [[], [('player_one', 3)], []],
+        [[('player_one', 2)], [], []]
+    ])
+    assert game.check_for_win() == 'player_one'
+
+
+def test_game_check_for_win_no_winner():
+    game = Game(3)
+    game.set_board([
+        [[('player_one', 3)], [('player_one', 3)], [('player_two', 3)]],
+        [[], [], []],
+        [[], [], []]
+    ])
+    assert game.check_for_win() is None
+
+
+def test_game_check_for_win_two_players_pieces():
+    game = Game(3)
+    game.set_board([
+        [[('player_two', 2)], [('player_two', 3)], [('player_one', 3)]],
+        [[], [('player_one', 3)], [('player_two', 3)]],
+        [[('player_one', 2)], [], [('player_two', 2)]]
+    ])
+    assert game.check_for_win() == 'player_one'
+
+
+def test_game_check_for_win_draw():
+    game = Game(3)
+    game.set_board([
+        [[('player_one', 3)], [('player_one', 3)], [('player_one', 3)]],
+        [[], [], []],
+        [[('player_two', 2)], [('player_two', 2)], [('player_two', 1)]]
+    ])
+    assert game.check_for_win() == 'Draw'
+
+
+def test_game_check_for_win_draw_by_repetition():
+    game = Game(3)
+    game.set_board([
+        [[('player_one', 3)], [], []],
+        [[], [], []],
+        [[('player_two', 3)], [], []]
+    ])
+    game.update_recent_boards()
+    game.move('player_two', 3, [1, 3], [2, 3])
+    game.move('player_one', 3, [1, 1], [2, 1])
+    game.move('player_two', 3, [2, 3], [1, 3])
+    game.move('player_one', 3, [2, 1], [1, 1])
+    game.move('player_two', 3, [1, 3], [2, 3])
+    game.move('player_one', 3, [1, 1], [2, 1])
+    game.move('player_two', 3, [2, 3], [1, 3])
+    game.move('player_one', 3, [2, 1], [1, 1])
+    assert game.check_for_win() == 'Draw'
+
+
+def test_game_check_for_win_draw_by_uncovering_piece():
+    game = Game(3)
+    game.set_board([
+        [[('player_one', 3)], [('player_one', 3)], []],
+        [[], [], []],
+        [[('player_two', 2), ('player_one', 3)], [('player_two', 2)], [('player_two', 1)]]
+    ])
+    game.move('player_one', 3, [1, 3], [3, 1])
+    assert game.check_for_win() == 'Draw'
+
+
+def test_game_check_for_win_win_by_covering_piece():
+    game = Game(3)
+    game.set_board([
+        [[('player_one', 3)], [('player_one', 3)], [('player_two', 2)]],
+        [[], [], []],
+        [[('player_one', 3)], [('player_two', 2)], [('player_two', 1)]]
+    ])
+    game.move('player_one', 3, [1, 3], [3, 1])
+    assert game.check_for_win() == 'player_one'
+
+
+def test_game_check_for_win_smaller_diagonal_on_4_by_4_board():
+    game = Game(4)
+    game.set_board([
+        [[], [('player_two', 4)], [], []],
+        [[('player_two', 4)], [], [], [('player_one', 4)]],
+        [[], [], [('player_one', 3)], []],
+        [[], [('player_one', 4)], [], []]
+    ])
+    assert game.check_for_win() is None
