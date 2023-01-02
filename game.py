@@ -20,15 +20,16 @@ class Game:
     def __init__(self, size) -> None:
         '''Takes in the board's size and generates a board with dimensions n by n, where n is the given size, two sets of pieces consisting of two pieces of each size and an empty list of recent board layouts'''
         self.__board = []
+        self.__size = size
         # generating the board
-        for i in range(size):
+        for i in range(self.__size):
             self.__board.append([])
-            for _ in range(size):
+            for _ in range(self.__size):
                 self.__board[i].append([])
         self.__player_one = []
         self.__player_two = []
         # creating sets of pieces
-        for i in range(size):
+        for i in range(self.__size):
             self.__player_one.extend([('player_one', i + 1)] * 2)
             self.__player_two.extend([('player_two', i + 1)] * 2)
         self.__recent_boards = []
@@ -40,6 +41,9 @@ class Game:
     def set_board(self, new_board):
         '''Sets the board's layout with a given one'''
         self.__board = new_board
+
+    def size(self):
+        return self.__size
 
     def player_one_pieces(self):
         '''Returns the first player's pieces'''
