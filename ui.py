@@ -4,11 +4,15 @@ from termcolor import colored
 
 
 class Interface:
-    def __init__(self, game: Game) -> None:
+    def __init__(self, game: Game, ai: bool) -> None:
         self.__game = game
+        self.__ai = ai
 
     def game(self):
         return self.__game
+
+    def ai(self):
+        return self.__ai
 
     def board(self):
         string = '----' * self.game().size() + '-\n'
@@ -26,22 +30,37 @@ class Interface:
             string += '|\n' + '----' * self.game().size() + '-\n'
         return string
 
-    def pieces(self, player, with_ai):
+    def pieces(self, player):
         if player == 'player_one':
             pieces_list = self.game().player_one_pieces()
         else:
             pieces_list = self.game().player_two_pieces()
         pieces_string = ', '.join([str(piece[1]) for piece in pieces_list])
-        if with_ai:
+        if self.ai():
             if player == 'player_one':
-                return 'Pionki gracza: ' + pieces_string
+                return 'Pionki gracza: ' + colored(pieces_string, 'red')
             else:
-                return 'Pionki komputera: ' + pieces_string
+                return 'Pionki komputera: ' + colored(pieces_string, 'blue')
         else:
             if player == 'player_one':
-                return 'Pionki pierwszego gracza: ' + pieces_string
+                return 'Pionki pierwszego gracza: ' + colored(pieces_string, 'red')
             else:
-                return 'Pionki drugiego gracza: ' + pieces_string
+                return 'Pionki drugiego gracza: ' + colored(pieces_string, 'blue')
+
+    def winner(self):
+        result = self.game().check_for_win()
+        if result is None:
+            return
+        elif result == 'player_one' and self.ai():
+            return 'Wygrana: Gracz'
+        elif result == 'player_one' and not self.ai():
+            return 'Wygrana: Gracz 1'
+        elif result == 'player_two' and self.ai():
+            return 'Wygrana: Komputer'
+        elif result == 'player_two' and not self.ai():
+            return 'Wygrana: Gracz 2'
+        else:
+            return 'Remis'
 
 
 if __name__ == '__main__':
