@@ -1,4 +1,3 @@
-import os
 from game import Game
 from termcolor import colored
 
@@ -61,29 +60,3 @@ class Interface:
             return 'Wygrana: Gracz 2'
         else:
             return 'Remis'
-
-
-if __name__ == '__main__':
-    message = ''
-    while True:
-        os.system('clear')
-        print(f'''
-Witaj w grze Gobblet Gobblers!
-
-1) Gra z drugim graczem
-2) Gra z komputerem
-
-0) Wyjdź
-
-{message}
-''', end='')
-        choice = input('Wybierz jedną z powyższych opcji wpisując jej numer... ')
-        if choice == '0':
-            os.system('clear')
-            break
-        elif choice == '1':
-            message = ''
-        elif choice == '2':
-            message = ''
-        else:
-            message = 'Nieprawidłowa opcja!'
