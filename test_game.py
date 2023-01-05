@@ -35,6 +35,11 @@ def test_game_set_board():
     ]
 
 
+def test_game_size():
+    game = Game(3)
+    assert game.size() == 3
+
+
 def test_game_player_one_pieces():
     game = Game(3)
     assert game.player_one_pieces() == [
