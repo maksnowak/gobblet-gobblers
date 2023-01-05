@@ -1,4 +1,4 @@
-from game import Game
+from game import Game, PieceUnavailableError, CantCoverPieceError, NotOnBoardError
 from ui import Interface
 import os
 
@@ -29,41 +29,79 @@ def game(size, ai):
 
     def move(player):
         nonlocal error_output
-        new_piece = input(move_prompt.format(player=''))[0].upper()
+        new_piece = input(move_prompt.format(player=player))[0].upper()
         if new_piece == 'T':
+            coordinates = None
             piece_size = input(size_prompt)
             if not piece_size.isnumeric() or int(piece_size) > size:
                 error_output = 'Nieprawidłowy rozmiar pionka'
                 return
-            new_coordinates = input(new_position_prompt).split()[:2]
+            try:
+                new_coordinates = [int(coordinate) for coordinate in input(new_position_prompt).split()[:2]]
+            except ValueError:
+                error_output = 'Nieprawidłowe koordynaty'
             if any([int(coordinate) <= 0 or int(coordinate) > size for coordinate in new_coordinates]):
                 error_output = 'Nieprawidłowe koordynaty'
         elif new_piece == 'N':
-            coordinates = input(position_prompt).split()[:2]
+            coordinates = [int(coordinate) for coordinate in input(position_prompt).split()[:2]]
             if any([int(coordinate) <= 0 or int(coordinate) > size for coordinate in coordinates]):
                 error_output = 'Nieprawidłowe koordynaty'
                 return
-            new_coordinates = input(new_position_prompt).split()[:2]
+            try:
+                piece_size = game.board()[coordinates[1] - 1][coordinates[0] - 1][-1][1]
+            except IndexError:
+                piece_size = 0
+            new_coordinates = [int(coordinate) for coordinate in input(new_position_prompt).split()[:2]]
             if any([int(coordinate) <= 0 or int(coordinate) > size for coordinate in new_coordinates]):
                 error_output = 'Nieprawidłowe koordynaty'
                 return
         else:
             error_output = 'Nieprawidłowy wybór'
             return
-    while True:
+        if ai:
+            _player = 'player_one'
+        elif not ai and player == ' 1':
+            _player = 'player_one'
+        else:
+            _player = 'player_two'
+        try:
+            game.move(_player, int(piece_size), coordinates, new_coordinates)
+        except NotOnBoardError:
+            error_output = 'Na podanych koordynatach nie znajduje się żaden pionek'
+            return
+        except PieceUnavailableError:
+            error_output = 'Nie masz takiego pionka'
+            return
+        except CantCoverPieceError:
+            error_output = 'Nie możesz postawić pionka! Pionek, który chcesz przykryć jest za duży'
+            return
+        return True
+
+    def game_status():
         os.system('clear')
         print(ui.board())
         print(ui.pieces('player_one'))
         print(ui.pieces('player_two'))
         print(error_output)
+
+    while True:
+        game_status()
         if ai and _round % 2 == 1:
-            move('')
+            round_result = move('')
         elif ai:
             pass
         elif _round % 2 == 1:
-            move(' 1')
+            round_result = move(' 1')
         else:
-            move(' 2')
+            round_result = move(' 2')
+        if round_result:
+            if ui.winner() is not None:
+                game_status()
+                print(ui.winner())
+                input('Naciśnij Enter, aby powrócić do menu głównego...')
+                break
+            error_output = ''
+            _round += 1
 
 
 def main():
@@ -79,7 +117,6 @@ def main():
             size = input('Podaj rozmiar planszy: ')
             if size.isnumeric() and int(size) > 2:
                 game(int(size), False)
-                break
             else:
                 message = 'Nieprawidłowy rozmiar planszy!'
         elif choice == '2':

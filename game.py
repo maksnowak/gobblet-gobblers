@@ -83,9 +83,17 @@ class Game:
         else:
             player_pieces = self.player_two_pieces
             set_player_pieces = self.set_player_two_pieces
-        # checking if player has the piece
-        if (player, size) not in player_pieces() and previous_position is None:
-            raise PieceUnavailableError('This piece is not available!')
+        if previous_position is None:
+            # checking if player has the piece
+            if (player, size) not in player_pieces():
+                raise PieceUnavailableError('This piece is not available!')
+            # TODO get rid of except: pass
+            try:
+                # checking if there is a piece which cannot be covered
+                if size <= self.board()[new_position[1] - 1][new_position[0] - 1][-1][1]:
+                    raise CantCoverPieceError('The piece you are trying to cover is larger than your piece!')
+            except IndexError:
+                pass
         if previous_position is not None:
             # checking if the piece is on board
             try:
