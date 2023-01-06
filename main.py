@@ -123,8 +123,8 @@ def main():
             break
         elif choice == '1':
             message = ''
-            size = input('Podaj rozmiar planszy: ')
-            if size.isnumeric() and int(size) > 2:
+            size = input('Podaj rozmiar planszy (od 3 do 9): ')
+            if size.isnumeric() and int(size) > 2 and int(size) < 10:
                 game(int(size), False)
             else:
                 message = 'Nieprawidłowy rozmiar planszy!'
