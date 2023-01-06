@@ -38,8 +38,11 @@ def game(size, ai):
                 return
             try:
                 new_coordinates = [int(coordinate) for coordinate in input(new_position_prompt).split()[:2]]
+                if len(new_coordinates) < 2:
+                    raise ValueError
             except ValueError:
                 error_output = 'Nieprawidłowe koordynaty'
+                return
             if any([int(coordinate) <= 0 or int(coordinate) > size for coordinate in new_coordinates]):
                 error_output = 'Nieprawidłowe koordynaty'
         elif new_piece == 'N':
@@ -51,7 +54,13 @@ def game(size, ai):
                 piece_size = game.board()[coordinates[1] - 1][coordinates[0] - 1][-1][1]
             except IndexError:
                 piece_size = 0
-            new_coordinates = [int(coordinate) for coordinate in input(new_position_prompt).split()[:2]]
+            try:
+                new_coordinates = [int(coordinate) for coordinate in input(new_position_prompt).split()[:2]]
+                if len(new_coordinates) < 2:
+                    raise ValueError
+            except ValueError:
+                error_output = 'Nieprawidłowe koordynaty'
+                return
             if any([int(coordinate) <= 0 or int(coordinate) > size for coordinate in new_coordinates]):
                 error_output = 'Nieprawidłowe koordynaty'
                 return
