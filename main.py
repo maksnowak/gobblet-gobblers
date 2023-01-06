@@ -33,7 +33,7 @@ def game(size, ai):
         if new_piece == 'T':
             coordinates = None
             piece_size = input(size_prompt)
-            if not piece_size.isnumeric() or int(piece_size) > size:
+            if not piece_size.isnumeric() or int(piece_size) > size or int(piece_size) < 1:
                 error_output = 'Nieprawidłowy rozmiar pionka'
                 return
             try:
