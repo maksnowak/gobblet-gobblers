@@ -45,6 +45,7 @@ def game(size, ai):
                 return
             if any([int(coordinate) <= 0 or int(coordinate) > size for coordinate in new_coordinates]):
                 error_output = 'Nieprawidłowe koordynaty'
+                return
         elif new_piece == 'N':
             coordinates = [int(coordinate) for coordinate in input(position_prompt).split()[:2]]
             if any([int(coordinate) <= 0 or int(coordinate) > size for coordinate in coordinates]):
