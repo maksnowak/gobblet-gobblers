@@ -1,5 +1,6 @@
 from game import Game, PieceUnavailableError, CantCoverPieceError, NotOnBoardError
 from ui import Interface
+from ai import Ai
 import os
 
 
@@ -100,6 +101,7 @@ def game(size, ai):
         print(ui.pieces('player_two'))
         print(error_output)
 
+    computer = Ai(game)
     while True:
         game_status()
         # player's turn
@@ -107,7 +109,8 @@ def game(size, ai):
             round_result = move('')
         # computer's turn
         elif ai:
-            pass
+            computer.make_move()
+            round_result = True
         # first player's turn
         elif _round % 2 == 1:
             round_result = move(' 1')
@@ -117,6 +120,7 @@ def game(size, ai):
         if round_result:
             # declaring the winne
             if ui.winner() is not None:
+                error_output = ''
                 game_status()
                 print(ui.winner())
                 input('Naciśnij Enter, aby powrócić do menu głównego...')
@@ -128,6 +132,15 @@ def game(size, ai):
 def main():
     '''Display's the main menu and handles user's choices'''
     message = ''  # error messages will be saved here
+
+    def game_creation(with_computer):
+        nonlocal message
+        message = ''
+        size = input('Podaj rozmiar planszy (od 3 do 9): ')
+        if size.isnumeric() and int(size) > 2 and int(size) < 10:
+            game(int(size), with_computer)
+        else:
+            message = 'Nieprawidłowy rozmiar planszy!'
     while True:
         menu(message)
         choice = input('Wybierz jedną z powyższych opcji wpisując jej numer: ')
@@ -135,14 +148,9 @@ def main():
             os.system('clear')
             break
         elif choice == '1':
-            message = ''
-            size = input('Podaj rozmiar planszy (od 3 do 9): ')
-            if size.isnumeric() and int(size) > 2 and int(size) < 10:
-                game(int(size), False)
-            else:
-                message = 'Nieprawidłowy rozmiar planszy!'
+            game_creation(False)
         elif choice == '2':
-            message = ''
+            game_creation(True)
         else:
             message = 'Nieprawidłowa opcja!'
 
