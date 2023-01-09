@@ -379,6 +379,20 @@ def test_game_recent_boards_after_tenth_move():
     ]
 
 
+def test_game_top_layer():
+    game = Game(3)
+    game.set_board([
+        [[('player_one', 1), ('player_two', 2), ('player_two', 3)], [], []],
+        [[], [('player_one', 2), ('player_one', 3)], []],
+        [[], [], [('player_two', 1)]]
+    ])
+    assert game.top_layer() == [
+        [('player_two', 3), ('',), ('',)],
+        [('',), ('player_one', 3), ('',)],
+        [('',), ('',), ('player_two', 1)]
+    ]
+
+
 def test_game_check_for_win_top_row():
     game = Game(3)
     game.set_board([

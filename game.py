@@ -131,11 +131,10 @@ class Game:
         # adding the updated board to the list of recent boards
         self.update_recent_boards()
 
-    def check_for_win(self):
-        '''Checks if any player has already won the game, there is a draw (either by repetition or both players having n pieces in row at the same time) or if the game has not been settled yet'''
-        possible_winners = []  # necessary for checking a situation where uncovering a piece creates a row for both players
-        top_layer = []  # visible pieces on the board only
-        # populating the top_layer with pieces (or an empty string if there is none)
+    def top_layer(self):
+        '''Returns a list of visible pieces only'''
+        result = []
+        # populating the result with board pieces (or an empty string if there is none)
         for row in self.board():
             new_row = []
             for cell in row:
@@ -143,7 +142,13 @@ class Game:
                     new_row.append(cell[-1])
                 except IndexError:
                     new_row.append(('',))
-            top_layer.append(new_row)
+            result.append(new_row)
+        return result
+
+    def check_for_win(self):
+        '''Checks if any player has already won the game, there is a draw (either by repetition or both players having n pieces in row at the same time) or if the game has not been settled yet'''
+        possible_winners = []  # necessary for checking a situation where uncovering a piece creates a row for both players
+        top_layer = self.top_layer()
         # checking rows
         for row in top_layer:
             row_pieces = []
