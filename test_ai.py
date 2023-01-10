@@ -1,5 +1,6 @@
-from ai import Ai
+from ai import Ai, CouldNotWinError
 from game import Game
+from pytest import raises
 from unittest import mock
 
 
@@ -49,3 +50,268 @@ def test_ai_random_move_piece_from_board(monkeypatch):
         [[], [('player_two', 1)], []],
         [[], [], []]
     ]
+
+
+def test_ai_win_top_row():
+    game = Game(3)
+    ai = Ai(game)
+    game.set_board([
+        [[('player_two', 1)], [], [('player_two', 1)]],
+        [[], [], []],
+        [[], [], []]
+    ])
+    ai.win()
+    assert game.board() == [
+        [[('player_two', 1)], [('player_two', 3)], [('player_two', 1)]],
+        [[], [], []],
+        [[], [], []]
+    ]
+
+
+def test_ai_win_middle_row():
+    game = Game(3)
+    ai = Ai(game)
+    game.set_board([
+        [[], [], []],
+        [[('player_two', 3)], [('player_two', 3)], []],
+        [[], [], []]
+    ])
+    game.set_player_two_pieces([('player_two', 1), ('player_two', 1), ('player_two', 2), ('player_two', 2)])
+    ai.win()
+    assert game.board() == [
+        [[], [], []],
+        [[('player_two', 3)], [('player_two', 3)], [('player_two', 2)]],
+        [[], [], []]
+    ]
+
+
+def test_ai_win_bottom_row():
+    game = Game(3)
+    ai = Ai(game)
+    game.set_board([
+        [[], [], []],
+        [[], [], []],
+        [[], [('player_two', 3)], [('player_two', 2)]]
+    ])
+    ai.win()
+    assert game.board() == [
+        [[], [], []],
+        [[], [], []],
+        [[('player_two', 3)], [('player_two', 3)], [('player_two', 2)]]
+    ]
+
+
+def test_ai_win_left_column():
+    game = Game(3)
+    ai = Ai(game)
+    game.set_board([
+        [[('player_two', 2)], [], []],
+        [[('player_two', 3)], [], []],
+        [[], [], []]
+    ])
+    ai.win()
+    assert game.board() == [
+        [[('player_two', 2)], [], []],
+        [[('player_two', 3)], [], []],
+        [[('player_two', 3)], [], []]
+    ]
+
+
+def test_ai_win_middle_column():
+    game = Game(3)
+    ai = Ai(game)
+    game.set_board([
+        [[], [('player_two', 2)], []],
+        [[], [], []],
+        [[], [('player_two', 3)], []]
+    ])
+    ai.win()
+    assert game.board() == [
+        [[], [('player_two', 2)], []],
+        [[], [('player_two', 3)], []],
+        [[], [('player_two', 3)], []]
+    ]
+
+
+def test_ai_win_right_column():
+    game = Game(3)
+    ai = Ai(game)
+    game.set_board([
+        [[], [], []],
+        [[], [], [('player_two', 2)]],
+        [[], [], [('player_two', 3)]]
+    ])
+    ai.win()
+    assert game.board() == [
+        [[], [], [('player_two', 3)]],
+        [[], [], [('player_two', 2)]],
+        [[], [], [('player_two', 3)]]
+    ]
+
+
+def test_ai_win_left_diagonal():
+    game = Game(3)
+    ai = Ai(game)
+    game.set_board([
+        [[('player_two', 3)], [], []],
+        [[], [('player_two', 2)], []],
+        [[], [], []]
+    ])
+    ai.win()
+    assert game.board() == [
+        [[('player_two', 3)], [], []],
+        [[], [('player_two', 2)], []],
+        [[], [], [('player_two', 3)]]
+    ]
+
+
+def test_ai_win_right_diagonal():
+    game = Game(3)
+    ai = Ai(game)
+    game.set_board([
+        [[], [], []],
+        [[], [('player_two', 2)], []],
+        [[('player_two', 3)], [], []]
+    ])
+    ai.win()
+    assert game.board() == [
+        [[], [], [('player_two', 3)]],
+        [[], [('player_two', 2)], []],
+        [[('player_two', 3)], [], []]
+    ]
+
+
+def test_ai_win_top_row_cover_opponents_piece():
+    game = Game(3)
+    ai = Ai(game)
+    game.set_board([
+        [[('player_two', 1)], [('player_one', 1)], [('player_two', 1)]],
+        [[], [], []],
+        [[], [], []]
+    ])
+    ai.win()
+    assert game.board() == [
+        [[('player_two', 1)], [('player_one', 1), ('player_two', 3)], [('player_two', 1)]],
+        [[], [], []],
+        [[], [], []]
+    ]
+
+
+def test_ai_win_middle_row_cover_opponents_piece():
+    game = Game(3)
+    ai = Ai(game)
+    game.set_board([
+        [[], [], []],
+        [[('player_two', 3)], [('player_two', 3)], [('player_one', 1)]],
+        [[], [], []]
+    ])
+    game.set_player_two_pieces([('player_two', 1), ('player_two', 1), ('player_two', 2), ('player_two', 2)])
+    ai.win()
+    assert game.board() == [
+        [[], [], []],
+        [[('player_two', 3)], [('player_two', 3)], [('player_one', 1), ('player_two', 2)]],
+        [[], [], []]
+    ]
+
+
+def test_ai_win_bottom_row_cover_opponents_piece():
+    game = Game(3)
+    ai = Ai(game)
+    game.set_board([
+        [[], [], []],
+        [[], [], []],
+        [[('player_one', 1)], [('player_two', 3)], [('player_two', 2)]]
+    ])
+    ai.win()
+    assert game.board() == [
+        [[], [], []],
+        [[], [], []],
+        [[('player_one', 1), ('player_two', 3)], [('player_two', 3)], [('player_two', 2)]]
+    ]
+
+
+def test_ai_win_left_column_cover_opponents_piece():
+    game = Game(3)
+    ai = Ai(game)
+    game.set_board([
+        [[('player_two', 2)], [], []],
+        [[('player_two', 3)], [], []],
+        [[('player_one', 1)], [], []]
+    ])
+    ai.win()
+    assert game.board() == [
+        [[('player_two', 2)], [], []],
+        [[('player_two', 3)], [], []],
+        [[('player_one', 1), ('player_two', 3)], [], []]
+    ]
+
+
+def test_ai_win_middle_column_cover_opponents_piece():
+    game = Game(3)
+    ai = Ai(game)
+    game.set_board([
+        [[], [('player_two', 2)], []],
+        [[], [('player_one', 1)], []],
+        [[], [('player_two', 3)], []]
+    ])
+    ai.win()
+    assert game.board() == [
+        [[], [('player_two', 2)], []],
+        [[], [('player_one', 1), ('player_two', 3)], []],
+        [[], [('player_two', 3)], []]
+    ]
+
+
+def test_ai_win_right_column_cover_opponents_piece():
+    game = Game(3)
+    ai = Ai(game)
+    game.set_board([
+        [[], [], [('player_one', 1)]],
+        [[], [], [('player_two', 2)]],
+        [[], [], [('player_two', 3)]]
+    ])
+    ai.win()
+    assert game.board() == [
+        [[], [], [('player_one', 1), ('player_two', 3)]],
+        [[], [], [('player_two', 2)]],
+        [[], [], [('player_two', 3)]]
+    ]
+
+
+def test_ai_win_left_diagonal_cover_opponents_piece():
+    game = Game(3)
+    ai = Ai(game)
+    game.set_board([
+        [[('player_two', 3)], [], []],
+        [[], [('player_two', 2)], []],
+        [[], [], [('player_one', 1)]]
+    ])
+    ai.win()
+    assert game.board() == [
+        [[('player_two', 3)], [], []],
+        [[], [('player_two', 2)], []],
+        [[], [], [('player_one', 1), ('player_two', 3)]]
+    ]
+
+
+def test_ai_win_right_diagonal_cover_opponents_piece():
+    game = Game(3)
+    ai = Ai(game)
+    game.set_board([
+        [[], [], [('player_one', 1)]],
+        [[], [('player_two', 2)], []],
+        [[('player_two', 3)], [], []]
+    ])
+    ai.win()
+    assert game.board() == [
+        [[], [], [('player_one', 1), ('player_two', 3)]],
+        [[], [('player_two', 2)], []],
+        [[('player_two', 3)], [], []]
+    ]
+
+
+def test_ai_win_couldnt_win():
+    game = Game(3)
+    ai = Ai(game)
+    with raises(CouldNotWinError):
+        ai.win()
