@@ -4,7 +4,7 @@ from ai import Ai
 import os
 
 
-def menu(output):
+def menu(output: str):
     '''Displays the main menu'''
     os.system('clear')
     print(f'''
@@ -19,7 +19,7 @@ Witaj w grze Gobblet Gobblers!
 ''', end='')
 
 
-def game(size, ai):
+def game(size, ai: int):
     '''Begins a game'''
     game = Game(size)
     ui = Interface(game, ai)
@@ -30,7 +30,7 @@ def game(size, ai):
     position_prompt = 'Podaj koordynaty pionka, który chcesz przenieść (najpierw podaj numer kolumny, a następnie wiersza): '
     new_position_prompt = 'Podaj koordynaty, na które chcesz postawić pionek (najpierw podaj numer kolumny, a następnie wiersza): '
 
-    def move(player):
+    def move(player: str):
         '''Displays move prompts and handles user input'''
         nonlocal error_output  # necessary for displaying error messages
         new_piece = input(move_prompt.format(player=player))[0].upper()  # ignores everything but the first character and makes it uppercase in order to avoid executing the same instructions twice
@@ -133,7 +133,7 @@ def main():
     '''Display's the main menu and handles user's choices'''
     message = ''  # error messages will be saved here
 
-    def game_creation(with_computer):
+    def game_creation(with_computer: bool):
         nonlocal message
         message = ''
         size = input('Podaj rozmiar planszy (od 3 do 9): ')

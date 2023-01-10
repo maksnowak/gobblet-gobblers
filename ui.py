@@ -34,7 +34,7 @@ class Interface:
             string += '|\n' + '----' * self.game().size() + '-\n'  # bottom border
         return string
 
-    def pieces(self, player):
+    def pieces(self, player: str):
         '''Takes in the player whose pieces will be shown. Returns a list of the given player's pieces (the pieces are colored the same as on the board)'''
         # aliasing player's pieces list in order to avoid repeating code
         if player == 'player_one':
