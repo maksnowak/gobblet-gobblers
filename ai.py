@@ -2,7 +2,7 @@ from game import Game, PieceUnavailableError, CantCoverPieceError, NotOnBoardErr
 from random import randint, choice
 
 
-class CouldNotWinError(Exception):
+class CouldNotMoveError(Exception):
     pass
 
 
@@ -29,7 +29,7 @@ class Ai:
             except (PieceUnavailableError, CantCoverPieceError, NotOnBoardError, IndexError):
                 pass
 
-    def win(self):
+    def complete_row(self, player):
         board = self.game().board()
         largest_piece = max(self.game().player_two_pieces())[1]
         # checking rows
@@ -40,13 +40,37 @@ class Ai:
                     row_pieces.append(cell[-1][0])
                 except IndexError:
                     row_pieces.append('')
-            if len(set(row_pieces)) == 2 and row_pieces.count('player_two') == 2:
-                try:
-                    coordinates = [row_pieces.index('') + 1, i + 1]
-                except ValueError:
-                    coordinates = [row_pieces.index('player_one') + 1, i + 1]
-                self.game().move('player_two', largest_piece, None, coordinates)
-                return
+                if len(set(row_pieces)) == 2 and row_pieces.count(player) == 2:
+                    old_coordinates = None
+                    try:
+                        coordinates = [row_pieces.index('') + 1, i + 1]
+                    except ValueError:
+                        coordinates = [row_pieces.index('player_one') + 1, i + 1]
+                    try:
+                        cell_size = board[coordinates[0]][coordinates[1]][-1][1]
+                    except IndexError:
+                        cell_size = 0
+                    for j, top_layer_row in enumerate(self.game().top_layer()):
+                        for k, cell in enumerate(top_layer_row):
+                            if cell[0] == 'player_two' and cell[1] > cell_size:
+                                old_coordinates = [k + 1, j + 1]
+                                break
+                        else:
+                            continue
+                        break
+                    try:
+                        moved = False
+                        if player == 'player_two':
+                            try:
+                                self.game().move('player_two', largest_piece, None, coordinates)
+                                moved = True
+                            except (NotOnBoardError, PieceUnavailableError, CantCoverPieceError):
+                                pass
+                        if not moved:
+                            self.game().move('player_two', largest_piece, old_coordinates, coordinates)
+                    except CantCoverPieceError:
+                        pass
+                    return True
         # checking columns
         for i in range(len(board)):
             column_pieces = []
@@ -55,13 +79,41 @@ class Ai:
                     column_pieces.append(board[j][i][-1][0])
                 except IndexError:
                     column_pieces.append('')
-            if len(set(column_pieces)) == 2 and column_pieces.count('player_two') == 2:
+            if len(set(column_pieces)) == 2 and column_pieces.count(player) == 2:
+                old_coordinates = None
                 try:
                     coordinates = [i + 1, column_pieces.index('') + 1]
                 except ValueError:
                     coordinates = [i + 1, column_pieces.index('player_one') + 1]
-                self.game().move('player_two', largest_piece, None, coordinates)
-                return
+                try:
+                    cell_size = board[coordinates[0]][coordinates[1]][-1][1]
+                except IndexError:
+                    cell_size = 0
+                for k in range(len(board)):
+                    for l in range(len(board)):  # noqa: E741
+                        try:
+                            cell = board[l][k][-1]
+                        except IndexError:
+                            cell = ('', 0)
+                        if cell[0] == 'player_two' and cell[1] > cell_size:
+                            old_coordinates = [k + 1, l + 1]
+                            break
+                    else:
+                        continue
+                    break
+                try:
+                    moved = False
+                    if player == 'player_two':
+                        try:
+                            self.game().move('player_two', largest_piece, None, coordinates)
+                            moved = True
+                        except (NotOnBoardError, PieceUnavailableError, CantCoverPieceError):
+                            pass
+                    if not moved:
+                        self.game().move('player_two', largest_piece, old_coordinates, coordinates)
+                except CantCoverPieceError:
+                    pass
+                return True
         # checking left diagonal
         left_diagonal_pieces = []
         for i in range(len(board)):
@@ -69,13 +121,34 @@ class Ai:
                 left_diagonal_pieces.append(board[i][i][-1][0])
             except IndexError:
                 left_diagonal_pieces.append('')
-        if len(set(left_diagonal_pieces)) == 2 and left_diagonal_pieces.count('player_two') == 2:
+        if len(set(left_diagonal_pieces)) == 2 and left_diagonal_pieces.count(player) == 2:
+            old_coordinates = None
             try:
                 coordinates = [left_diagonal_pieces.index('') + 1] * 2
             except ValueError:
                 coordinates = [left_diagonal_pieces.index('player_one') + 1] * 2
-            self.game().move('player_two', largest_piece, None, coordinates)
-            return
+            try:
+                cell_size = board[coordinates[0]][coordinates[1]][-1][1]
+            except IndexError:
+                cell_size = 0
+            if player == 'player_one':
+                for j in range(len(board)):
+                    for k in range(len(board)):
+                        try:
+                            cell = board[j][k][-1]
+                        except IndexError:
+                            cell = ('', 0)
+                        if cell[0] == 'player_two' and cell[1] > cell_size:
+                            old_coordinates = [k + 1, j + 1]
+                            break
+                    else:
+                        continue
+                    break
+            try:
+                self.game().move('player_two', largest_piece, old_coordinates, coordinates)
+            except CantCoverPieceError:
+                pass
+            return True
         # checking right diagonal
         right_diagonal_pieces = []
         for i in range(len(board)):
@@ -83,17 +156,55 @@ class Ai:
                 right_diagonal_pieces.append(board[i][-1 - i][-1][0])
             except IndexError:
                 right_diagonal_pieces.append('')
-        if len(set(right_diagonal_pieces)) == 2 and right_diagonal_pieces.count('player_two') == 2:
+        if len(set(right_diagonal_pieces)) == 2 and right_diagonal_pieces.count(player) == 2:
+            old_coordinates = None
             try:
-                coordinates = [right_diagonal_pieces.index(''), right_diagonal_pieces.index('') + 1]
+                coordinates = [-1 * right_diagonal_pieces.index('') + 3, right_diagonal_pieces.index('') + 1]
             except ValueError:
-                coordinates = [right_diagonal_pieces.index('player_one'), right_diagonal_pieces.index('player_one') + 1]
-            self.game().move('player_two', largest_piece, None, coordinates)
-            return
-        raise CouldNotWinError('There isn\'t any winning move')
+                coordinates = [-1 * right_diagonal_pieces.index('player_one') + 3, right_diagonal_pieces.index('player_one') + 1]
+            try:
+                cell_size = board[coordinates[0]][coordinates[1]][-1][1]
+            except IndexError:
+                cell_size = 0
+            if player == 'player_one':
+                for j in range(len(board)):
+                    for k in range(len(board)):
+                        try:
+                            cell = board[j][k][-1]
+                        except IndexError:
+                            cell = ('', 0)
+                        if cell[0] == 'player_two' and cell[1] > cell_size:
+                            old_coordinates = [k + 1, j + 1]
+                            break
+                    else:
+                        continue
+                    break
+            try:
+                self.game().move('player_two', largest_piece, old_coordinates, coordinates)
+            except CantCoverPieceError:
+                pass
+            return True
+        return False
+
+    def win(self):
+        if not self.complete_row('player_two'):
+            raise CouldNotMoveError('There isn\'t any winning move')
+
+    def block(self):
+        if not self.complete_row('player_one'):
+            raise CouldNotMoveError('There isn\'t any winning move')
 
     def make_move(self):
+        moved = False
         try:
             self.win()
-        except (PieceUnavailableError, NotOnBoardError, CantCoverPieceError, CouldNotWinError):
+            moved = True
+        except (NotOnBoardError, PieceUnavailableError, CantCoverPieceError, CouldNotMoveError):
+            moved = False
+        try:
+            self.block()
+            moved = True
+        except (NotOnBoardError, PieceUnavailableError, CantCoverPieceError, CouldNotMoveError):
+            moved = False
+        if not moved:
             self.random_move()

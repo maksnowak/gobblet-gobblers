@@ -1,4 +1,4 @@
-from ai import Ai, CouldNotWinError
+from ai import Ai, CouldNotMoveError
 from game import Game
 from pytest import raises
 from unittest import mock
@@ -310,8 +310,104 @@ def test_ai_win_right_diagonal_cover_opponents_piece():
     ]
 
 
+def test_ai_win_by_moving_other_piece_row():
+    game = Game(3)
+    ai = Ai(game)
+    game.set_board([
+        [[], [], []],
+        [[], [], [('player_two', 3)]],
+        [[], [('player_two', 3)], [('player_two', 2)]]
+    ])
+    ai.win()
+    assert game.board() == [
+        [[], [], []],
+        [[], [], []],
+        [[('player_two', 3)], [('player_two', 3)], [('player_two', 2)]]
+    ]
+
+
+def test_ai_win_by_moving_other_piece_column():
+    game = Game(3)
+    ai = Ai(game)
+    game.set_board([
+        [[], [('player_two', 2)], []],
+        [[('player_two', 3)], [], []],
+        [[], [('player_two', 3)], []]
+    ])
+    ai.win()
+    assert game.board() == [
+        [[], [('player_two', 2)], []],
+        [[], [('player_two', 3)], []],
+        [[], [('player_two', 3)], []]
+    ]
+
+
+def test_ai_block_row():
+    game = Game(3)
+    ai = Ai(game)
+    game.set_board([
+        [[], [], []],
+        [[], [], [('player_two', 3)]],
+        [[], [('player_one', 3)], [('player_one', 2)]]
+    ])
+    ai.block()
+    assert game.board() == [
+        [[], [], []],
+        [[], [], []],
+        [[('player_two', 3)], [('player_one', 3)], [('player_one', 2)]]
+    ]
+
+
+def test_ai_block_column():
+    game = Game(3)
+    ai = Ai(game)
+    game.set_board([
+        [[], [('player_one', 2)], []],
+        [[('player_two', 3)], [], []],
+        [[], [('player_one', 3)], []]
+    ])
+    ai.block()
+    assert game.board() == [
+        [[], [('player_one', 2)], []],
+        [[], [('player_two', 3)], []],
+        [[], [('player_one', 3)], []]
+    ]
+
+
+def test_ai_block_left_diagonal():
+    game = Game(3)
+    ai = Ai(game)
+    game.set_board([
+        [[('player_one', 3)], [('player_two', 3)], []],
+        [[], [('player_one', 2)], []],
+        [[], [], []]
+    ])
+    ai.block()
+    assert game.board() == [
+        [[('player_one', 3)], [], []],
+        [[], [('player_one', 2)], []],
+        [[], [], [('player_two', 3)]]
+    ]
+
+
+def test_ai_block_right_diagonal():
+    game = Game(3)
+    ai = Ai(game)
+    game.set_board([
+        [[], [('player_two', 3)], [('player_one', 3)]],
+        [[], [('player_one', 2)], []],
+        [[], [], []]
+    ])
+    ai.block()
+    assert game.board() == [
+        [[], [], [('player_one', 3)]],
+        [[], [('player_one', 2)], []],
+        [[('player_two', 3)], [], []]
+    ]
+
+
 def test_ai_win_couldnt_win():
     game = Game(3)
     ai = Ai(game)
-    with raises(CouldNotWinError):
+    with raises(CouldNotMoveError):
         ai.win()
