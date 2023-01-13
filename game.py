@@ -181,6 +181,7 @@ class Game:
             possible_winners.append(right_diagonal_pieces[0])
         # checking for draw by repetition
         for board in self.recent_boards():
+            # TODO optimize checking for repetition
             if self.recent_boards().count(board) == 3:
                 return 'Draw'
         # checking for draw or win
