@@ -406,7 +406,7 @@ def test_ai_block_right_diagonal():
     ]
 
 
-def test_ai_win_couldnt_win():
+def test_ai_win_couldnt_move():
     game = Game(3)
     ai = Ai(game)
     with raises(CouldNotMoveError):
