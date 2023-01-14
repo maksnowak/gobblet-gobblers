@@ -51,6 +51,8 @@ class Ai:
                     except IndexError:
                         cell_size = 0
                     for j, top_layer_row in enumerate(self.game().top_layer()):
+                        if j == i:
+                            continue
                         for k, cell in enumerate(top_layer_row):
                             if cell[0] == 'player_two' and cell[1] > cell_size:
                                 old_coordinates = [k + 1, j + 1]
@@ -58,18 +60,7 @@ class Ai:
                         else:
                             continue
                         break
-                    try:
-                        moved = False
-                        if player == 'player_two':
-                            try:
-                                self.game().move('player_two', largest_piece, None, coordinates)
-                                moved = True
-                            except (NotOnBoardError, PieceUnavailableError, CantCoverPieceError):
-                                pass
-                        if not moved:
-                            self.game().move('player_two', largest_piece, old_coordinates, coordinates)
-                    except CantCoverPieceError:
-                        pass
+                    self.game().move('player_two', largest_piece, old_coordinates, coordinates)
                     return True
         # checking columns
         for i in range(len(board)):
@@ -90,6 +81,8 @@ class Ai:
                 except IndexError:
                     cell_size = 0
                 for k in range(len(board)):
+                    if k == i:
+                        continue
                     for l in range(len(board)):  # noqa: E741
                         try:
                             cell = board[l][k][-1]
@@ -101,18 +94,7 @@ class Ai:
                     else:
                         continue
                     break
-                try:
-                    moved = False
-                    if player == 'player_two':
-                        try:
-                            self.game().move('player_two', largest_piece, None, coordinates)
-                            moved = True
-                        except (NotOnBoardError, PieceUnavailableError, CantCoverPieceError):
-                            pass
-                    if not moved:
-                        self.game().move('player_two', largest_piece, old_coordinates, coordinates)
-                except CantCoverPieceError:
-                    pass
+                self.game().move('player_two', largest_piece, old_coordinates, coordinates)
                 return True
         # checking left diagonal
         left_diagonal_pieces = []
@@ -144,10 +126,7 @@ class Ai:
                     else:
                         continue
                     break
-            try:
-                self.game().move('player_two', largest_piece, old_coordinates, coordinates)
-            except CantCoverPieceError:
-                pass
+            self.game().move('player_two', largest_piece, old_coordinates, coordinates)
             return True
         # checking right diagonal
         right_diagonal_pieces = []
@@ -179,10 +158,7 @@ class Ai:
                     else:
                         continue
                     break
-            try:
-                self.game().move('player_two', largest_piece, old_coordinates, coordinates)
-            except CantCoverPieceError:
-                pass
+            self.game().move('player_two', largest_piece, old_coordinates, coordinates)
             return True
         return False
 
@@ -201,10 +177,11 @@ class Ai:
             moved = True
         except (NotOnBoardError, PieceUnavailableError, CantCoverPieceError, CouldNotMoveError):
             moved = False
-        try:
-            self.block()
-            moved = True
-        except (NotOnBoardError, PieceUnavailableError, CantCoverPieceError, CouldNotMoveError):
-            moved = False
+        if not moved:
+            try:
+                self.block()
+                moved = True
+            except (NotOnBoardError, PieceUnavailableError, CantCoverPieceError, CouldNotMoveError):
+                moved = False
         if not moved:
             self.random_move()
