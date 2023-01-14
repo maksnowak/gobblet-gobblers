@@ -19,22 +19,22 @@ class Interface:
     def board(self):
         '''Generates the board's view with pieces displayed as an integer with the piece's size (red - player, blue - second player / computer)'''
         string = '----' * self.game().size() + '-\n'  # top border
-        for row in self.game().board():
+        for row in self.game().top_layer():
             for cell in row:
                 # generating pieces or an empty space if there are none
                 try:
-                    if cell[-1][0] == 'player_one':
+                    if cell[0] == 'player_one':
                         color = 'red'
-                    elif cell[-1][0] == 'player_two':
+                    elif cell[0] == 'player_two':
                         color = 'blue'
-                    piece = colored(cell[-1][1], color)
+                    piece = colored(cell[1], color)
                 except IndexError:
                     piece = ' '
                 string += f'| {piece} '
             string += '|\n' + '----' * self.game().size() + '-\n'  # bottom border
         return string
 
-    def pieces(self, player):
+    def pieces(self, player: str):
         '''Takes in the player whose pieces will be shown. Returns a list of the given player's pieces (the pieces are colored the same as on the board)'''
         # aliasing player's pieces list in order to avoid repeating code
         if player == 'player_one':

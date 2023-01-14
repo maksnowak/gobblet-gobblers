@@ -17,7 +17,7 @@ class CantCoverPieceError(Exception):
 
 
 class Game:
-    def __init__(self, size) -> None:
+    def __init__(self, size: int) -> None:
         '''Takes in the board's size and generates a board with dimensions n by n, where n is the given size, two sets of pieces consisting of two pieces of each size and an empty list of recent board layouts'''
         self.__board = []
         self.__size = size
@@ -38,7 +38,7 @@ class Game:
         '''Returns the board with all the pieces on it'''
         return self.__board
 
-    def set_board(self, new_board):
+    def set_board(self, new_board: list):
         '''Sets the board's layout with a given one'''
         self.__board = new_board
 
@@ -49,7 +49,7 @@ class Game:
         '''Returns the first player's pieces'''
         return self.__player_one
 
-    def set_player_one_pieces(self, new_pieces):
+    def set_player_one_pieces(self, new_pieces: list):
         '''Sets the first player's pieces with a given set'''
         self.__player_one = new_pieces
 
@@ -57,7 +57,7 @@ class Game:
         '''Returns the second player's pieces'''
         return self.__player_two
 
-    def set_player_two_pieces(self, new_pieces):
+    def set_player_two_pieces(self, new_pieces: list):
         '''Sets the second player's pieces with a given set'''
         self.__player_two = new_pieces
 
@@ -74,7 +74,7 @@ class Game:
         boards.append(current_board)
         self.__recent_boards = boards
 
-    def move(self, player, size, previous_position, new_position):
+    def move(self, player: str, size: int, previous_position, new_position: list):
         '''Makes a move. Takes in the player who makes the move, the size of a piece to be moved, a tuple with the previous (current) coordinates (or None if the piece will be placed on the board for the first time) and a tuple with the new coordinates. The tuples consist of the x coordinate being the first element and the y coordinate - the second one'''
         # aliasing the pieces' methods in order to avoid repeating the code
         if player == 'player_one':
@@ -131,11 +131,10 @@ class Game:
         # adding the updated board to the list of recent boards
         self.update_recent_boards()
 
-    def check_for_win(self):
-        '''Checks if any player has already won the game, there is a draw (either by repetition or both players having n pieces in row at the same time) or if the game has not been settled yet'''
-        possible_winners = []  # necessary for checking a situation where uncovering a piece creates a row for both players
-        top_layer = []  # visible pieces on the board only
-        # populating the top_layer with pieces (or an empty string if there is none)
+    def top_layer(self):
+        '''Returns a list of visible pieces only'''
+        result = []
+        # populating the result with board pieces (or an empty string if there is none)
         for row in self.board():
             new_row = []
             for cell in row:
@@ -143,7 +142,13 @@ class Game:
                     new_row.append(cell[-1])
                 except IndexError:
                     new_row.append(('',))
-            top_layer.append(new_row)
+            result.append(new_row)
+        return result
+
+    def check_for_win(self):
+        '''Checks if any player has already won the game, there is a draw (either by repetition or both players having n pieces in row at the same time) or if the game has not been settled yet'''
+        possible_winners = []  # necessary for checking a situation where uncovering a piece creates a row for both players
+        top_layer = self.top_layer()
         # checking rows
         for row in top_layer:
             row_pieces = []
@@ -176,6 +181,7 @@ class Game:
             possible_winners.append(right_diagonal_pieces[0])
         # checking for draw by repetition
         for board in self.recent_boards():
+            # TODO optimize checking for repetition
             if self.recent_boards().count(board) == 3:
                 return 'Draw'
         # checking for draw or win
