@@ -8,16 +8,21 @@ class CouldNotMoveError(Exception):
 
 class Ai:
     def __init__(self, game: Game) -> None:
+        '''Represents a computer player. Takes in a Game object.'''
         self.__game = game
 
     def game(self):
+        '''Returns the given Game object'''
         return self.__game
 
     def random_move(self):
+        '''Makes a random move'''
         size = self.game().size()
         while True:
+            # random board positions
             coordinates = [randint(1, size), randint(1, size)]
             new_coordinates = [randint(1, size), randint(1, size)]
+            # computer decides whether to move an existing piece or place a new one
             piece = choice([coordinates, None])
             try:
                 if piece is None:
@@ -30,8 +35,9 @@ class Ai:
                 pass
 
     def complete_row(self, player):
+        '''Searches for a chance to complete a row, column or a diagonal with a piece. Takes in a player - information whether to try to win or block player's win'''
         board = self.game().board()
-        largest_piece = max(self.game().player_two_pieces())[1]
+        largest_piece = max(self.game().player_two_pieces())[1]  # the size of the largest computer's piece - reduces the chance of raising PieceNotAvailable error
         # checking rows
         for i, row in enumerate(board):
             row_pieces = []
@@ -46,12 +52,13 @@ class Ai:
                         coordinates = [row_pieces.index('') + 1, i + 1]
                     except ValueError:
                         coordinates = [row_pieces.index('player_one') + 1, i + 1]
+                    # check the size of a piece on the position the computer will move its piece to
                     try:
                         cell_size = board[coordinates[0]][coordinates[1]][-1][1]
                     except IndexError:
                         cell_size = 0
                     for j, top_layer_row in enumerate(self.game().top_layer()):
-                        if j == i:
+                        if j == i:  # avoiding moving a piece from the row that will be completed
                             continue
                         for k, cell in enumerate(top_layer_row):
                             if cell[0] == 'player_two' and cell[1] > cell_size:
@@ -76,12 +83,13 @@ class Ai:
                     coordinates = [i + 1, column_pieces.index('') + 1]
                 except ValueError:
                     coordinates = [i + 1, column_pieces.index('player_one') + 1]
+                # check the size of a piece on the position the computer will move its piece to
                 try:
                     cell_size = board[coordinates[0]][coordinates[1]][-1][1]
                 except IndexError:
                     cell_size = 0
                 for k in range(len(board)):
-                    if k == i:
+                    if k == i:  # avoiding moving a piece from the column that will be completed
                         continue
                     for l in range(len(board)):  # noqa: E741
                         try:
@@ -109,11 +117,12 @@ class Ai:
                 coordinates = [left_diagonal_pieces.index('') + 1] * 2
             except ValueError:
                 coordinates = [left_diagonal_pieces.index('player_one') + 1] * 2
+            # check the size of a piece on the position the computer will move its piece to
             try:
                 cell_size = board[coordinates[0]][coordinates[1]][-1][1]
             except IndexError:
                 cell_size = 0
-            if player == 'player_one':
+            if player == 'player_one':  # blocking player's win
                 for j in range(len(board)):
                     for k in range(len(board)):
                         try:
@@ -141,11 +150,12 @@ class Ai:
                 coordinates = [-1 * right_diagonal_pieces.index('') + 3, right_diagonal_pieces.index('') + 1]
             except ValueError:
                 coordinates = [-1 * right_diagonal_pieces.index('player_one') + 3, right_diagonal_pieces.index('player_one') + 1]
+            # check the size of a piece on the position the computer will move its piece to
             try:
                 cell_size = board[coordinates[0]][coordinates[1]][-1][1]
             except IndexError:
                 cell_size = 0
-            if player == 'player_one':
+            if player == 'player_one':  # blocking player's win
                 for j in range(len(board)):
                     for k in range(len(board)):
                         try:
@@ -163,15 +173,18 @@ class Ai:
         return False
 
     def win(self):
+        '''Tries to win the game by completing the row with the computer's piece'''
         if not self.complete_row('player_two'):
             raise CouldNotMoveError('There isn\'t any winning move')
 
     def block(self):
+        '''Tries to block the player's win by completing the row with the computer's piece'''
         if not self.complete_row('player_one'):
             raise CouldNotMoveError('There isn\'t any winning move')
 
     def make_move(self):
-        moved = False
+        '''Makes a move. At first tries to win the game, if that's not possible, looks for a possible player's win and tries to block it, if that is not possible too, makes a random move'''
+        moved = False  # necessary for avoiding a situation where computer makes more than one move in its turn
         try:
             self.win()
             moved = True
