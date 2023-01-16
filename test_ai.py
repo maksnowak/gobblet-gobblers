@@ -37,8 +37,8 @@ def test_ai_random_move_piece_from_board(monkeypatch):
 
     def returnPiece(x):
         return [1, 1]
-    # TODO write mocks in a prettier way
-    mocks = mock.Mock(side_effect=[returnOne(), returnOne(), returnTwo(), returnTwo(), returnOne(), returnOne()])
+    mocklist = [returnOne(), returnOne(), returnTwo(), returnTwo(), returnOne(), returnOne()]
+    mocks = mock.Mock(side_effect=mocklist)
     monkeypatch.setattr('ai.randint', mocks)
     monkeypatch.setattr('ai.choice', returnPiece)
     game = Game(3)
