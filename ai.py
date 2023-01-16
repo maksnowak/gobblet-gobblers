@@ -3,6 +3,7 @@ from random import randint, choice
 
 
 class CouldNotMoveError(Exception):
+    '''Raised when the computer could not move its piece'''
     pass
 
 
