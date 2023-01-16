@@ -66,5 +66,7 @@ class Interface:
             return 'Wygrana: Komputer'
         elif result == 'player_two' and not self.ai():
             return 'Wygrana: Gracz 2'
+        elif result == 'DrawByRepetition':
+            return 'Remis - powtórzenie ruchów'
         else:
             return 'Remis'

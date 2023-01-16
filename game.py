@@ -83,18 +83,15 @@ class Game:
         else:
             player_pieces = self.player_two_pieces
             set_player_pieces = self.set_player_two_pieces
+        position_pieces = self.board()[new_position[1] - 1][new_position[0] - 1]
         if previous_position is None:
             # checking if player has the piece
             if (player, size) not in player_pieces():
                 raise PieceUnavailableError('This piece is not available!')
-            # TODO get rid of except: pass
-            try:
-                # checking if there is a piece which cannot be covered
-                if size <= self.board()[new_position[1] - 1][new_position[0] - 1][-1][1]:
-                    raise CantCoverPieceError('The piece you are trying to cover is larger than your piece!')
-            except IndexError:
-                pass
-        if previous_position is not None:
+            # checking if there is a piece which cannot be covered
+            if len(position_pieces) > 0 and size <= position_pieces[-1][1]:
+                raise CantCoverPieceError('The piece you are trying to cover is larger than your piece!')
+        else:
             # checking if the piece is on board
             try:
                 # when there is a piece at the given coordinates but it is not the same
@@ -103,13 +100,9 @@ class Game:
             # when there is not any piece
             except IndexError:
                 raise NotOnBoardError('This piece is not on the board!')
-            # TODO get rid of except: pass
-            try:
-                # checking if there is a piece which cannot be covered
-                if size <= self.board()[new_position[1] - 1][new_position[0] - 1][-1][1]:
-                    raise CantCoverPieceError('The piece you are trying to cover is larger than your piece!')
-            except IndexError:
-                pass
+            # checking if there is a piece which cannot be covered
+            if len(position_pieces) > 0 and size <= position_pieces[-1][1]:
+                raise CantCoverPieceError('The piece you are trying to cover is larger than your piece!')
         # adding a new piece
         if previous_position is None:
             new_board = deepcopy(self.board())
@@ -181,9 +174,8 @@ class Game:
             possible_winners.append(right_diagonal_pieces[0])
         # checking for draw by repetition
         for board in self.recent_boards():
-            # TODO optimize checking for repetition
             if self.recent_boards().count(board) == 3:
-                return 'Draw'
+                return 'DrawByRepetition'
         # checking for draw or win
         if len(possible_winners) == 0:
             return None

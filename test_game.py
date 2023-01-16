@@ -519,7 +519,7 @@ def test_game_check_for_win_draw_by_repetition():
     game.move('player_one', 3, [1, 1], [2, 1])
     game.move('player_two', 3, [2, 3], [1, 3])
     game.move('player_one', 3, [2, 1], [1, 1])
-    assert game.check_for_win() == 'Draw'
+    assert game.check_for_win() == 'DrawByRepetition'
 
 
 def test_game_check_for_win_draw_by_uncovering_piece():

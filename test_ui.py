@@ -95,6 +95,25 @@ def test_interface_winner_player_two_no_ai():
     assert Interface(game, False).winner() == 'Wygrana: Gracz 2'
 
 
+def test_interface_winner_draw_by_repetition():
+    game = Game(3)
+    game.set_board([
+        [[('player_one', 3)], [], []],
+        [[], [], []],
+        [[('player_two', 3)], [], []]
+    ])
+    game.update_recent_boards()
+    game.move('player_two', 3, [1, 3], [2, 3])
+    game.move('player_one', 3, [1, 1], [2, 1])
+    game.move('player_two', 3, [2, 3], [1, 3])
+    game.move('player_one', 3, [2, 1], [1, 1])
+    game.move('player_two', 3, [1, 3], [2, 3])
+    game.move('player_one', 3, [1, 1], [2, 1])
+    game.move('player_two', 3, [2, 3], [1, 3])
+    game.move('player_one', 3, [2, 1], [1, 1])
+    assert Interface(game, False).winner() == 'Remis - powtórzenie ruchów'
+
+
 def test_interface_winner_draw():
     game = Game(3)
     game.set_board([
