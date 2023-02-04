@@ -76,7 +76,10 @@ def test_ai_win_middle_row():
         [[('player_two', 3)], [('player_two', 3)], []],
         [[], [], []]
     ])
-    game.set_player_two_pieces([('player_two', 1), ('player_two', 1), ('player_two', 2), ('player_two', 2)])
+    game.set_player_two_pieces([('player_two', 1),
+                                ('player_two', 1),
+                                ('player_two', 2),
+                                ('player_two', 2)])
     ai.win()
     assert game.board() == [
         [[], [], []],
@@ -205,7 +208,10 @@ def test_ai_win_middle_row_cover_opponents_piece():
         [[('player_two', 3)], [('player_two', 3)], [('player_one', 1)]],
         [[], [], []]
     ])
-    game.set_player_two_pieces([('player_two', 1), ('player_two', 1), ('player_two', 2), ('player_two', 2)])
+    game.set_player_two_pieces([('player_two', 1),
+                                ('player_two', 1),
+                                ('player_two', 2),
+                                ('player_two', 2)])
     ai.win()
     assert game.board() == [
         [[], [], []],
