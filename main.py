@@ -2,11 +2,17 @@ from game import Game, PieceUnavailableError, CantCoverPieceError, NotOnBoardErr
 from ui import Interface
 from ai import Ai
 import os
+from sys import platform
 
+def clear():
+    if platform == 'win32':
+        os.system('cls')
+    else:
+        os.system('clear')
 
 def menu(output: str):
     '''Displays the main menu'''
-    os.system('clear')
+    clear()
     print(f'''
 Welcome to Gobblet Gobblers!
 
@@ -98,7 +104,7 @@ def game(size, ai: int):
 
     def game_status():
         '''Displays the board, the player's pieces and error messages if there are any'''
-        os.system('clear')
+        clear()
         print(ui.board())
         print(ui.pieces('player_one'))
         print(ui.pieces('player_two'))
@@ -148,7 +154,7 @@ def main():
         menu(message)
         choice = input('Select one of the options by typing its number ')
         if choice == '0':
-            os.system('clear')
+            clear()
             break
         elif choice == '1':
             game_creation(False)
