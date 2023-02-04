@@ -32,22 +32,22 @@ def test_interface_board_4_by_4():
 
 def test_interface_pieces_player_one_no_ai():
     game = Game(3)
-    assert Interface(game, False).pieces('player_one') == 'Pionki pierwszego gracza: 1, 1, 2, 2, 3, 3'
+    assert Interface(game, False).pieces('player_one') == 'Player 1\'s pieces: 1, 1, 2, 2, 3, 3'
 
 
 def test_interface_pieces_player_two_no_ai():
     game = Game(3)
-    assert Interface(game, False).pieces('player_two') == 'Pionki drugiego gracza: 1, 1, 2, 2, 3, 3'
+    assert Interface(game, False).pieces('player_two') == 'Player 2\'s pieces: 1, 1, 2, 2, 3, 3'
 
 
 def test_interface_pieces_player_one_with_ai():
     game = Game(3)
-    assert Interface(game, True).pieces('player_one') == 'Pionki gracza: 1, 1, 2, 2, 3, 3'
+    assert Interface(game, True).pieces('player_one') == 'Player\'s pieces: 1, 1, 2, 2, 3, 3'
 
 
 def test_interface_pieces_player_two_with_ai():
     game = Game(3)
-    assert Interface(game, True).pieces('player_two') == 'Pionki komputera: 1, 1, 2, 2, 3, 3'
+    assert Interface(game, True).pieces('player_two') == 'Computer\'s pieces: 1, 1, 2, 2, 3, 3'
 
 
 def test_interface_winner_no_winner():
@@ -62,7 +62,7 @@ def test_interface_winner_player_one_with_ai():
         [[], [], []],
         [[], [], []]
     ])
-    assert Interface(game, True).winner() == 'Wygrana: Gracz'
+    assert Interface(game, True).winner() == 'Player wins'
 
 
 def test_interface_winner_player_two_with_ai():
@@ -72,7 +72,7 @@ def test_interface_winner_player_two_with_ai():
         [[], [], []],
         [[], [], []]
     ])
-    assert Interface(game, True).winner() == 'Wygrana: Komputer'
+    assert Interface(game, True).winner() == 'Computer wins'
 
 
 def test_interface_winner_player_one_no_ai():
@@ -82,7 +82,7 @@ def test_interface_winner_player_one_no_ai():
         [[], [], []],
         [[], [], []]
     ])
-    assert Interface(game, False).winner() == 'Wygrana: Gracz 1'
+    assert Interface(game, False).winner() == 'Player 1 wins'
 
 
 def test_interface_winner_player_two_no_ai():
@@ -92,7 +92,7 @@ def test_interface_winner_player_two_no_ai():
         [[], [], []],
         [[], [], []]
     ])
-    assert Interface(game, False).winner() == 'Wygrana: Gracz 2'
+    assert Interface(game, False).winner() == 'Player 2 wins'
 
 
 def test_interface_winner_draw_by_repetition():
@@ -111,7 +111,7 @@ def test_interface_winner_draw_by_repetition():
     game.move('player_one', 3, [1, 1], [2, 1])
     game.move('player_two', 3, [2, 3], [1, 3])
     game.move('player_one', 3, [2, 1], [1, 1])
-    assert Interface(game, False).winner() == 'Remis - powtórzenie ruchów'
+    assert Interface(game, False).winner() == 'Draw by repetition'
 
 
 def test_interface_winner_draw():
@@ -121,4 +121,4 @@ def test_interface_winner_draw():
         [[], [], []],
         [[('player_two', 2)], [('player_two', 2)], [('player_two', 1)]]
     ])
-    assert Interface(game, False).winner() == 'Remis'
+    assert Interface(game, False).winner() == 'Draw'

@@ -44,14 +44,14 @@ class Interface:
         pieces_string = ', '.join([str(piece[1]) for piece in pieces_list])  # a user-friendly version of the list of pieces
         if self.ai():
             if player == 'player_one':
-                return 'Pionki gracza: ' + colored(pieces_string, 'red')
+                return 'Player\'s pieces: ' + colored(pieces_string, 'red')
             else:
-                return 'Pionki komputera: ' + colored(pieces_string, 'blue')
+                return 'Computer\'s pieces: ' + colored(pieces_string, 'blue')
         else:
             if player == 'player_one':
-                return 'Pionki pierwszego gracza: ' + colored(pieces_string, 'red')
+                return 'Player 1\'s pieces: ' + colored(pieces_string, 'red')
             else:
-                return 'Pionki drugiego gracza: ' + colored(pieces_string, 'blue')
+                return 'Player 2\'s pieces: ' + colored(pieces_string, 'blue')
 
     def winner(self):
         '''Returns a string with information who won the game (or if it is a draw). If the game cannot be settled yet, returns None'''
@@ -59,14 +59,14 @@ class Interface:
         if result is None:
             return
         elif result == 'player_one' and self.ai():
-            return 'Wygrana: Gracz'
+            return 'Player wins'
         elif result == 'player_one' and not self.ai():
-            return 'Wygrana: Gracz 1'
+            return 'Player 1 wins'
         elif result == 'player_two' and self.ai():
-            return 'Wygrana: Komputer'
+            return 'Computer wins'
         elif result == 'player_two' and not self.ai():
-            return 'Wygrana: Gracz 2'
+            return 'Player 2 wins'
         elif result == 'DrawByRepetition':
-            return 'Remis - powtórzenie ruchów'
+            return 'Draw by repetition'
         else:
-            return 'Remis'
+            return 'Draw'
